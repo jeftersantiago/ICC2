@@ -1,0 +1,6 @@
+#+title: Introdução a Ciência de Computação
+
+Trabalhos, listas e algoritmos da disciplina SCC0201.
+
+
+
