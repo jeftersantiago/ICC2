@@ -65,6 +65,8 @@ void printWine(Wine *wine){
 }
 
 /**
+   TODO: alocação dinâmica. 
+
    Faz leitura do arquivo .CSV
    Retorna vetor de structs com todos elementos do arquivo lido.
    Parametros:

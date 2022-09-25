@@ -1,22 +1,50 @@
 #include "search.h"
 #include "wine.h"
 #include <stdio.h>
+
+
+Wine **search (Wine **list, const double key, const int size, const int property) {
+
+    wineSort(list, size, property);
+    int index = binarySearch(list, key, 0, size - 1, property);
+    if(index == -1){
+        return -1;
+    }
+    
+}
+
+int binarySearch(Wine **list, const double key, int begin, int end, const int property){
+//     insertionSort(list, N_ROWS, property);
+//     wineSort(list, N_ROWS, property);
+     int center;
+     while(begin <= end) {
+         center = (int) ((begin + end) / 2.0);
+         if(getWine(list[center], property) == key)
+             return center + 1;
+         if(getWine(list[center], property) > key)
+             end = center - 1;
+         if(getWine(list[center], property) < key)
+             begin = center + 1;
+     }
+     return -1;
+}
 /**
+   TODO:
    Verifique se o valor encontrado é o primeiro dentre
    todos os outros iguais no vetor, caso contrário,
    busque o primeiro deles.
 **/
-Wine *binarySearch(Wine **list, const Wine *key, int begin, int end, const int property){
+Wine *binarySearch(Wine **list, const double key, int begin, int end, const int property){
 //     insertionSort(list, N_ROWS, property);
-     wineSort(list, N_ROWS, property);
+//     wineSort(list, N_ROWS, property);
      int center;
      while(begin <= end) {
          center = (int) ((begin + end) / 2.0);
-         if(getWine(list[center], property) == getWine(key, property))
+         if(getWine(list[center], property) == key)
              return list[center + 1];
-         if(getWine(list[center], property) > getWine(key, property))
+         if(getWine(list[center], property) > key)
              end = center - 1;
-         if(getWine(list[center], property) < getWine(key, property))
+         if(getWine(list[center], property) < key)
              begin = center + 1;
      }
      return emptyWine(); 
