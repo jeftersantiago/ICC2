@@ -10,7 +10,8 @@
 
 **/
 Wine *binarySearch(Wine **list, const Wine *key, int begin, int end, const int property){
-     insertionSort(list, N_ROWS, property);
+//     insertionSort(list, N_ROWS, property);
+     wineSort(list, N_ROWS, property);
      int center;
      while(begin <= end) {
          center = (int) ((begin + end) / 2.0);
@@ -26,19 +27,17 @@ Wine *binarySearch(Wine **list, const Wine *key, int begin, int end, const int p
 
 void wineSort(Wine **list, const int size, const int property){
     for(int i = 0; i < size; i++){
-        for(int j = 0; j < size; j++){
-            if(getWine(list[i], property) > getWine(list[j], property)){
+        for(int j = 0; j < size - i; j++){
+            if(getWine(list[j], property) > getWine(list[i], property))
+                swap(list, j, i);
+            if((getWine(list[j], property) == getWine(list[i], property)) && getId(list[j]) > getId(list[i]))
                 swap(list, i, j);
-            }
-            else if(getWine(list[i], property) == getWine(list[j], property)){
-                
-            }
         }
     }
 }
 void swap(Wine **list, int currentIndex, int newIndex){
     Wine *aux = list[currentIndex];
-    list[currentIndex] = currentIndex[newIndex];
+    list[currentIndex] = list[newIndex];
     list[newIndex] = aux;
 }
 

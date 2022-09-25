@@ -2,7 +2,7 @@
    Jefter Santiago
    nºUSP: 12559016
    SCC0201
- **/
+**/
 #include "wine.h"
 #include "search.h"
 
@@ -18,33 +18,30 @@ int main(){
 
     if(wineList == NULL) return 1;
 
-    printf("\n");
-    
-    for(int i = 0; i < 10; i++){ // N_ROWS; i++){
+    for(int i = 0; i < 10; i++){
         printWine(wineList[i]);
     }
 
+    printf("\n");
     Wine *key = newWine(9, 0.36, 6.1, 0.9978, 3.35, 10.5);
 
     Wine *searched = binarySearch(wineList, key, 0, N_ROWS - 1, 4);
+    free(key);
 
     printf("\nBusca pelo vinho: \n");
     printWine(searched);
-    printf("\n\n");
+    printf("\n");
 
     if(getId(searched) == -1){
         printf("No wine was found.\n");
-        free(searched);
     }
     else {
         printf("Vinho encontrado: \n");
         printWine(searched);   
     }
-
     for(int i = 0; i < N_ROWS; i++){
         destroyWine(wineList[i]);
     }
-
     return 0;
 }
 
