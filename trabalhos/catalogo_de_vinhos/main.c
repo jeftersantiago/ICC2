@@ -10,10 +10,10 @@
 #include<string.h>
 
 int main(){
+
     char fname[50];
 //    scanf("%49[^\n]%*c", fname);
     scanf("%s", fname);
-    
     Wine **wineList = loadData(fname);
 
     if(wineList == NULL) return 1;
@@ -47,14 +47,14 @@ int main(){
         else property = 5;
 
         // tmp.
-        int size = N_ROWS;
+        int size = N_ROWS; 
        
         search (wineList, key, property, size);
         i++;
     }
     for(int i = 0; i < N_ROWS; i++){
-        //   destroyWine(wineList[i]);
         free(wineList[i]);
     }
+    free(wineList);
     return 0;
 }

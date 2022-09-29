@@ -9,6 +9,7 @@
    Other - alcohol
 **/
 #define DOUBLE_COLS 5
+#define N_ROWS 739
 
 typedef struct WINE Wine;
 

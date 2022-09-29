@@ -12,12 +12,15 @@ int binarySearch(Wine **list, const double key, int begin, int end, const int pr
    também quantos vinhos foram os resultados.
 **/
 void search(Wine **list, double key, int property, int size){
+
     wineSort(list, size, property);
     int index = binarySearch(list, key, 0, size - 1, property);
+
     if(index == -1){
         printf("Nenhum vinho encontrado\n");
         return;
     }
+
     Wine *searchedWine = list[index];
     double prop = getProperty(list[index], property);
     int count = index + 1;
@@ -25,6 +28,7 @@ void search(Wine **list, double key, int property, int size){
     count = count - index;
     printWine(searchedWine);
     printf("Total de vinhos encontrados: %d\n", count);
+
 }
 
 /**

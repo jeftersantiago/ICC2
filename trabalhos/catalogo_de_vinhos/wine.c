@@ -36,7 +36,6 @@ double getProperty(const Wine *wine, int property){
         return wine->density;
     if(property == 4)
         return wine->pH;
-    
     return wine->alcohol;
 }
 
@@ -77,9 +76,12 @@ Wine **loadData (const char *fname){
     int i = 0;
     char line[100];
     while(fgets(line, 50, file) != NULL){
+
         sscanf(line, "%d,%lf,%lf,%lf,%lf,%lf", &id, &val[0], &val[1], &val[2], &val[3], &val[4]);
         wineList[i-1] = newWine(id, val[0], val[1], val[2], val[3], val[4]);
+        // i - 1 -> ignora a primeira linha.
         i++;
+
     }
     fclose(file);
     return wineList;
