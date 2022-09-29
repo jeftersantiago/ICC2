@@ -11,21 +11,7 @@ struct WINE {
     double pH;
     double alcohol;
 };
-    
-/**
-   Talvez não seja uma boa prática.
-   Ver de alterar depois.
- **/
-Wine *emptyWine(){
-    Wine *tmp = (Wine *) malloc(sizeof(Wine));
-    tmp->id = -1;
-    return tmp;
-}
-
-void destroyWine(Wine *wine){
-    free(wine);
-}
-
+   
 Wine *newWine(const int id, const double citric_acid, const double residual_sugar, const double
               density, const double pH, const double alcohol){
 
@@ -40,7 +26,6 @@ Wine *newWine(const int id, const double citric_acid, const double residual_suga
 
     return wine;
 }
-
 
 double getProperty(const Wine *wine, int property){
     if(property == 1)
@@ -64,7 +49,6 @@ void printWine(Wine *wine){
            wine->id, wine->citric_acid, wine->residual_sugar,
            wine->density, wine->pH, wine->alcohol);
 }
-
 /**
    TODO: alocação dinâmica. 
 

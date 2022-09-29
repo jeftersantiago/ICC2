@@ -2,12 +2,15 @@
 #include "wine.h"
 #include <stdio.h>
 
+void swap(Wine **list, int currentIndex, int newIndex);
+Wine** wineSort (Wine **list, const int size, const int property);
+int binarySearch(Wine **list, const double key, int begin, int end, const int property);
+
 /**
    Ver quantos vinhos iguais foram encontrados na busca
    e printar na tela além do primeiro vinho da lista
    também quantos vinhos foram os resultados.
 **/
-
 void search(Wine **list, double key, int property, int size){
     wineSort(list, size, property);
     int index = binarySearch(list, key, 0, size - 1, property);
@@ -25,6 +28,8 @@ void search(Wine **list, double key, int property, int size){
 }
 
 /**
+   Retorno: primeira ocorrência da chave procurada, caso exista, se não, -1.
+
    Faz a busca binária pela chave definida e quando encontra uma chave faz uma busca pela
    primeira ocorrência dela, ou seja, percorre a lista para esquerda até que encontra um
    valor diferente da chave encontrada.
@@ -39,6 +44,10 @@ int binarySearch(Wine **list, const double key, int begin, int end, const int pr
         double value = getProperty(list[center], property);
         
         if(value == key){
+            /**
+               Assegura de que a busca continuará sendo feita para todos os 
+               elementos à esquerda na lista.
+            **/
             result = center;
             end = center - 1;
         }
@@ -52,15 +61,16 @@ int binarySearch(Wine **list, const double key, int begin, int end, const int pr
 }
 /**
    Ordenação descrita nas especificações do trabalho.
-   Parameters:
-   Wine **list: list of structs of wines.
-   int size: size of list of structs. 
-   int property: attribute we want to sort.
-      1 - citric_acid
-      2 - residual_sugar
-      3 - density
-      4 - ph
-      Other - alcohol
+   
+   Parametros:
+   Wine **list: lista de structs Wine. 
+   int size: Tamanho da lista de structs.
+   int property: Atributo do struct Wine que queremos ordenar.
+           1 - citric_acid
+           2 - residual_sugar
+           3 - density
+           4 - ph
+           Other - alcohol
  **/
 Wine** wineSort (Wine **list, const int size, const int property){
     if(size == 1) return list;
@@ -73,9 +83,12 @@ Wine** wineSort (Wine **list, const int size, const int property){
     for(int i = 1; i < size; i++){
         int idCurrent = getId(list[i]);
         double propertyCurrent = getProperty(list[i], property);
+        // Checa qual termo é maior e também a condição de desempate pelo ID.
         if(propertyCurrent > propertyBegin || (propertyBegin == propertyCurrent && idCurrent > idBegin)){
-            // Changing these values at each iteration and
-            // using them to make the necessary comparisions.
+            /**
+               Muda essas variáveis sempre que essa condição for satisfeita, 
+               Os valores delas são usados apenas para executar as comparações.
+            **/
             index = i;
             propertyBegin = propertyCurrent;
             idBegin = idCurrent;
