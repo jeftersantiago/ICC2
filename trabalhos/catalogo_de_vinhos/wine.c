@@ -41,7 +41,8 @@ Wine *newWine(const int id, const double citric_acid, const double residual_suga
     return wine;
 }
 
-double getWine(const Wine *wine, int property){
+
+double getProperty(const Wine *wine, int property){
     if(property == 1)
         return wine->citric_acid;
     if(property == 2)

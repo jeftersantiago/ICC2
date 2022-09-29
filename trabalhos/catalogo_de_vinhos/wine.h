@@ -21,7 +21,7 @@ int getId(const Wine *wine);
 Wine **loadData(const char *fname);
 
 
-double getWine(const Wine *wine, int property);
+double getProperty(const Wine *wine, int property);
 int getId(const Wine *wine);
 
 

@@ -2,52 +2,53 @@
 #include "wine.h"
 #include <stdio.h>
 
+/**
+   Ver quantos vinhos iguais foram encontrados na busca
+   e printar na tela além do primeiro vinho da lista
+   também quantos vinhos foram os resultados.
+**/
 
-Wine **search (Wine **list, const double key, const int size, const int property) {
-
+void search(Wine **list, double key, int property, int size){
     wineSort(list, size, property);
     int index = binarySearch(list, key, 0, size - 1, property);
     if(index == -1){
-        return -1;
+        printf("Nenhum vinho encontrado\n");
+        return;
     }
-    
+    Wine *searchedWine = list[index];
+    double prop = getProperty(list[index], property);
+    int count = index + 1;
+    while(prop == getProperty(list[count], property)) count++;
+    count = count - index;
+    printWine(searchedWine);
+    printf("Total de vinhos encontrados: %d\n", count);
 }
 
-int binarySearch(Wine **list, const double key, int begin, int end, const int property){
-//     insertionSort(list, N_ROWS, property);
-//     wineSort(list, N_ROWS, property);
-     int center;
-     while(begin <= end) {
-         center = (int) ((begin + end) / 2.0);
-         if(getWine(list[center], property) == key)
-             return center + 1;
-         if(getWine(list[center], property) > key)
-             end = center - 1;
-         if(getWine(list[center], property) < key)
-             begin = center + 1;
-     }
-     return -1;
-}
 /**
-   TODO:
-   Verifique se o valor encontrado é o primeiro dentre
-   todos os outros iguais no vetor, caso contrário,
-   busque o primeiro deles.
-**/
-Wine *binarySearch(Wine **list, const double key, int begin, int end, const int property){
-//     insertionSort(list, N_ROWS, property);
-//     wineSort(list, N_ROWS, property);
-     int center;
-     while(begin <= end) {
-         center = (int) ((begin + end) / 2.0);
-         if(getWine(list[center], property) == key)
-             return list[center + 1];
-         if(getWine(list[center], property) > key)
-             end = center - 1;
-         if(getWine(list[center], property) < key)
-             begin = center + 1;
-     }
-     return emptyWine(); 
+   Faz a busca binária pela chave definida e quando encontra uma chave faz uma busca pela
+   primeira ocorrência dela, ou seja, percorre a lista para esquerda até que encontra um
+   valor diferente da chave encontrada.
+ **/
+int binarySearch(Wine **list, const double key, int begin, int end, const int property){
+    int center;
+    int result = - 1;
+
+    while(begin <= end){
+
+        center = (int) ((begin + end) / 2.0);
+        double value = getProperty(list[center], property);
+        
+        if(value == key){
+            result = center;
+            end = center - 1;
+        }
+        if(value > key)
+            end = center - 1;
+        if(value < key)
+            begin = center + 1;
+
+    }
+    return result;
 }
 /**
    Ordenação descrita nas especificações do trabalho.
@@ -61,45 +62,31 @@ Wine *binarySearch(Wine **list, const double key, int begin, int end, const int 
       4 - ph
       Other - alcohol
  **/
-void wineSort(Wine **list, const int size, const int property){
-    for(int i = 0; i < size; i++){
-        for(int j = 0; j < size - i; j++){
-            if(getWine(list[j], property) > getWine(list[i], property))
-                swap(list, j, i);
-            /**
-               Check the cases where the attribute value is equal and
-               if it is, sort it by ID in increasing order.
-             **/
-            if((getWine(list[j], property) == getWine(list[i], property)) && getId(list[j]) > getId(list[i]))
-                swap(list, i, j);
+Wine** wineSort (Wine **list, const int size, const int property){
+    if(size == 1) return list;
+
+    // All starts fixed at 0.
+    int index = 0;
+    int idBegin = getId(list[0]);
+    double propertyBegin = getProperty(list[0], property);
+
+    for(int i = 1; i < size; i++){
+        int idCurrent = getId(list[i]);
+        double propertyCurrent = getProperty(list[i], property);
+        if(propertyCurrent > propertyBegin || (propertyBegin == propertyCurrent && idCurrent > idBegin)){
+            // Changing these values at each iteration and
+            // using them to make the necessary comparisions.
+            index = i;
+            propertyBegin = propertyCurrent;
+            idBegin = idCurrent;
         }
     }
+    swap(list, index, size - 1);
+    return wineSort(list, size - 1, property);
 }
+
 void swap(Wine **list, int currentIndex, int newIndex){
     Wine *aux = list[currentIndex];
     list[currentIndex] = list[newIndex];
     list[newIndex] = aux;
-}
-
-/**
-   ## DEBUG 
-
-   Parameters:
-   int property:
-      1 - citric_acid
-      2 - residual_sugar
-      3 - density
-      4 - ph
-      Other - alcohol
-**/
-void insertionSort(Wine **list, const int listSize, const int property){
-    for(int i = 1; i < listSize; i++){
-        int j = i;
-        while((j > 0) && (getWine(list[j], property) < getWine(list[j - 1], property))){
-            Wine *tmp_wine = list[j];
-            list[j] = list[j - 1];
-            list[j - 1] = tmp_wine;
-            j = j - 1;
-        }
-    }
 }

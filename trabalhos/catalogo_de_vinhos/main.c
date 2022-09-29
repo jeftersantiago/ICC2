@@ -10,9 +10,10 @@
 #include<stdio.h>
 #include<string.h>
 
+
 int main(){
     char fname[50];
-    // regex para ler path.
+//    regex para ler path.
 //    scanf("%49[^\n]%*c", fname);
     scanf("%s", fname);
 //    strcpy(fname, "./data/vinhos dados.csv");
@@ -20,15 +21,9 @@ int main(){
 
     if(wineList == NULL) return 1;
 
-    /**
-       for(int i = 0; i < 10; i++){
-       printWine(wineList[i]);
-       }
-    **/
-
     int nSearch;
     scanf("%d", &nSearch);
-
+//    nSearch = 1;
     int numProp;
     char prop[20];
     double key;
@@ -56,49 +51,11 @@ int main(){
             numProp = 4;
         else numProp = 5;
 
-        /**
-           Ver quantos vinhos iguais foram encontrados na busca
-           e printar na tela além do primeiro vinho da lista
-           também quantos vinhos foram os resultados.
-        **/
-        int index = binarySearch(wineList, key, 0, N_ROWS - 1, numProp);
-        int counter = 0;
-        Wine *searchedWine = emptyWine();
-
-        while(getWine(wineList[index], numProp) == key){
-            for(int i = index + 1; i < N_ROWS; i++){
-                if(getId(wineList[index]) < getId(wineList[i]))
-                   searchedWine = wineList[i];
-            }
-            counter++;
-            index++; 
-        }
-//        printWine(result);
+        // tmp.
+        int size = N_ROWS;
+       
+        search (wineList, key, numProp, size);
         i++;
-    }
-
-    for(int i = 0; i < nSearch; i++){
-
-        /**
-        wineSort(list, size, property);
-        int index = binarySearch(list, key, 0, size - 1, property);
-        if(index == -1){
-            return -1;
-        }
-        **/
- 
-
-        
-        /**
-        if(getId(searchedWine[i]) == -1){
-            printf("Nenhum vinho encontrado.\n");
-        }
-        else {
-//            int total = 1;
-            printWine(searchedWine[i]);   
-            printf("Total de vinhos encontrados: %d\n", 33);
-        }
-        **/
     }
     for(int i = 0; i < N_ROWS; i++){
         destroyWine(wineList[i]);

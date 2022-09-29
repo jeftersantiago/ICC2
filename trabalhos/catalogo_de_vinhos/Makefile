@@ -12,7 +12,7 @@ debug:
 	gcc -DDEBUG -Wall $(MAIN) $(UTIL) -o $(BINARY)
 
 zip:
-	zip project.zip wine.c main.c Makefile
+	zip project.zip wine.h wine.c search.c search.h main.c Makefile
 
 valgrind:
 	valgrind --tool=memcheck --leak-check=full  --track-origins=yes --show-leak-kinds=all --show-reachable=yes ./$(BINARY)
