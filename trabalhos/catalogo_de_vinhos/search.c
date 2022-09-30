@@ -1,10 +1,11 @@
 #include "search.h"
-#include "wine.h"
-#include <stdio.h>
 
+/**
+   Métodos e funções utilizados para fazer a busca.
+ **/
 void swap(Wine **list, int currentIndex, int newIndex);
-Wine** wineSort (Wine **list, const int size, const int property);
 int binarySearch(Wine **list, const double key, int begin, int end, const int property);
+Wine** wineSort (Wine **list, const int size, const int property);
 
 /**
    Ver quantos vinhos iguais foram encontrados na busca
@@ -14,6 +15,7 @@ int binarySearch(Wine **list, const double key, int begin, int end, const int pr
 void search(Wine **list, double key, int property, int size){
 
     wineSort(list, size, property);
+
     int index = binarySearch(list, key, 0, size - 1, property);
 
     if(index == -1){
@@ -22,13 +24,13 @@ void search(Wine **list, double key, int property, int size){
     }
 
     Wine *searchedWine = list[index];
+    
     double prop = getProperty(list[index], property);
     int count = index + 1;
     while(prop == getProperty(list[count], property)) count++;
     count = count - index;
     printWine(searchedWine);
     printf("Total de vinhos encontrados: %d\n", count);
-
 }
 
 /**
@@ -101,7 +103,6 @@ Wine** wineSort (Wine **list, const int size, const int property){
     swap(list, index, size - 1);
     return wineSort(list, size - 1, property);
 }
-
 void swap(Wine **list, int currentIndex, int newIndex){
     Wine *aux = list[currentIndex];
     list[currentIndex] = list[newIndex];

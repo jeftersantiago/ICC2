@@ -1,7 +1,5 @@
 #include "wine.h"
-#include<stdlib.h>
-#include<string.h>
-#include<stdio.h>
+#define N_ROWS 739
 
 struct WINE {
     int id;
@@ -11,6 +9,7 @@ struct WINE {
     double pH;
     double alcohol;
 };
+
    
 Wine *newWine(const int id, const double citric_acid, const double residual_sugar, const double
               density, const double pH, const double alcohol){
@@ -48,41 +47,8 @@ void printWine(Wine *wine){
            wine->id, wine->citric_acid, wine->residual_sugar,
            wine->density, wine->pH, wine->alcohol);
 }
-/**
-   TODO: alocação dinâmica. 
 
-   Faz leitura do arquivo .CSV
-   Retorna vetor de structs com todos elementos do arquivo lido.
-   Parametros:
-   char *fname: nome do arquivo.
- */
-Wine **loadData (const char *fname){
-
-    Wine **wineList = (Wine **) malloc(N_ROWS * sizeof(Wine*));
-
-    FILE *file;
-    file = fopen(fname, "r");
-
-    if(file == NULL)
-    {
-        printf("Error opening file.\n");
-        return NULL;
-    }
-    int id;
-    // Valor de DOUBLE_COLS definido no arquivo wine.h
-    // citric_acid, residual_sugar ...
-    double val[DOUBLE_COLS];
-
-    int i = 0;
-    char line[100];
-    while(fgets(line, 50, file) != NULL){
-
-        sscanf(line, "%d,%lf,%lf,%lf,%lf,%lf", &id, &val[0], &val[1], &val[2], &val[3], &val[4]);
-        wineList[i-1] = newWine(id, val[0], val[1], val[2], val[3], val[4]);
-        // i - 1 -> ignora a primeira linha.
-        i++;
-
-    }
-    fclose(file);
-    return wineList;
+Wine **reallocWine(Wine **list, int newSize){
+    return (Wine **) realloc(list, newSize * sizeof(Wine *));
 }
+

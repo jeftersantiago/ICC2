@@ -3,10 +3,10 @@
    nºUSP: 12559016
    SCC0201
 **/
-#include "wine.h"
+
+#include "catalogue.h"
 #include "search.h"
-#include<stdlib.h>
-#include<stdio.h>
+
 #include<string.h>
 
 int main(){
@@ -14,21 +14,20 @@ int main(){
     char fname[50];
 //    scanf("%49[^\n]%*c", fname);
     scanf("%s", fname);
-    Wine **wineList = loadData(fname);
 
-    if(wineList == NULL) return 1;
+    Catalogue *catalogue = newCatalogue(fname);
+
+    if(getList(catalogue) == NULL) return 1;
 
     int nSearch;
     scanf("%d", &nSearch);
     int property;
-    char prop[20];
+    char propertyName[20];
     double key;
 
     int i = 0;
     while(i < nSearch){
-
-        scanf("%s %lf", prop, &key);
-        
+        scanf("%s %lf", propertyName, &key);
         /**
            1 - citric_acid
            2 - residual_sugar
@@ -36,25 +35,19 @@ int main(){
            4 - ph
            Other - alcohol
          **/
-        if(strcmp(prop, "citric_acid") == 0)
+        if(strcmp(propertyName, "citric_acid") == 0)
             property = 1;
-        else if(strcmp(prop, "residual_sugar") == 0)
+        else if(strcmp(propertyName, "residual_sugar") == 0)
             property = 2;
-        else if(strcmp(prop, "density") == 0)
+        else if(strcmp(propertyName, "density") == 0)
             property = 3;
-        else if(strcmp(prop, "pH") == 0)
+        else if(strcmp(propertyName, "pH") == 0)
             property = 4;
         else property = 5;
 
-        // tmp.
-        int size = N_ROWS; 
-       
-        search (wineList, key, property, size);
+        search (getList(catalogue), key, property, getAmount(catalogue));
         i++;
     }
-    for(int i = 0; i < N_ROWS; i++){
-        free(wineList[i]);
-    }
-    free(wineList);
+    destroyCatalogue(catalogue);
     return 0;
 }
