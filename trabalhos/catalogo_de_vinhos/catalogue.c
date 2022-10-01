@@ -29,10 +29,11 @@ Catalogue *newCatalogue(const char *fname){
 }
 
 void loadData(const char *fname, Catalogue *catalogue){
-
     int count = 0;
 
-    catalogue->list = NULL;
+//    catalogue->list = NULL;
+    int size = 500;
+    catalogue->list = (Wine **) malloc(sizeof(Wine *) * size);
 
     FILE *file;
     file = fopen(fname, "r");
@@ -42,23 +43,28 @@ void loadData(const char *fname, Catalogue *catalogue){
         printf("Error opening file.\n");
         return;
     }
-    int id;
+    /* Valores inicializados -> valgrind apontou erros quando não foram inicializados.*/
+    int id = -1;
     // Valor de DOUBLE_COLS definido no arquivo wine.h
     // citric_acid, residual_sugar ...
-    double val[DOUBLE_COLS];
+    double val[DOUBLE_COLS] = {0, 0, 0, 0, 0};
     char line[100];
 
     while(fgets(line, 50, file) != NULL){
 
         count++;
-
-        catalogue->list = (Wine **) realloc(catalogue->list, sizeof(Wine *) * count);
-
+        if(count == size){
+            size *= 2;
+            catalogue->list = (Wine **) realloc(catalogue->list, sizeof(Wine *) * size);
+        }
         sscanf(line, "%d,%lf,%lf,%lf,%lf,%lf", &id, &val[0], &val[1], &val[2], &val[3], &val[4]);
 
         catalogue->list[count - 1] = newWine(id, val[0], val[1], val[2], val[3], val[4]);
         // count - 1 -> ignora a primeira linha.
     }
+    // Realoca para um espaço com o quantidade realmente necessária de itens.
+    catalogue->list = (Wine **) realloc(catalogue->list, sizeof(Wine *) * count);
+
     catalogue->amount = count;
     fclose(file);
 }
@@ -70,3 +76,4 @@ void destroyCatalogue(Catalogue *catalogue){
     free(catalogue->list);
     free(catalogue);
 }
+
