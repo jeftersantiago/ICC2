@@ -14,3 +14,10 @@ void printVector(int* vec, int size){
     }
     printf("\n");
 }
+
+void print_vector(int* vec, int index, int size){
+    for(int i = index; i < size; i++){
+        printf("%d ", vec[i]);
+    }
+    printf("\n");
+}

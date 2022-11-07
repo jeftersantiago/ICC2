@@ -3,7 +3,7 @@ MAIN=main.c
 BINARY=main
 
 all:
-	gcc -Wall -g $(UTIL) $(MAIN) -o $(BINARY)
+	gcc -Wall -g -lm $(UTIL) $(MAIN) -o $(BINARY) 
 
 run:
 	./$(BINARY)
