@@ -9,11 +9,11 @@ char *readLine();
 
 int main () {
 
-
   int n_students;
   int n_grades;
   scanf("%d %d\n", &n_students, &n_grades);
 
+  /* Lista a ser ordenada */
   _student **student_list = (_student **) malloc(sizeof(_student *) * n_students);
 
   int i = 0;
@@ -29,19 +29,14 @@ int main () {
     c = NULL;
     
     student_list[i] = student; 
-    
     i++;
   }
 
   tournament_sort(student_list, n_students);
 
-  printf("[OUTPUT]\n");
   /**
-  for(int i = 0; i < n_students; i++){
-    printf("%d. %s\n", i+1, get_name(student_list[i]));
-  }
-  **/
-
+     Libera a memoria utilizada
+   **/
   for(int i = 0; i < n_students; i++){
     remove_student(student_list[i]);
   }
