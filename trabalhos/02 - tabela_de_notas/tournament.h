@@ -3,10 +3,8 @@
 
 #include "student.h"
 
-typedef struct QUEUE _queue;
-
 void tournament_sort (_student ** list, int n_students);
 
-void print_students (_queue * q);
+void print_students(_student ** tree, int index, int n);
 
 #endif
