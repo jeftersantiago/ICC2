@@ -14,7 +14,7 @@ int main () {
   scanf("%d %d\n", &n_students, &n_grades);
 
   /* Lista a ser ordenada */
-  _student **student_list = (_student **) malloc(sizeof(_student *) * n_students);
+  _student **list = (_student **) malloc(sizeof(_student *) * n_students);
 
   int i = 0;
 
@@ -28,19 +28,26 @@ int main () {
     free(c);
     c = NULL;
     
-    student_list[i] = student; 
+    list[i] = student; 
     i++;
   }
 
-  tournament_sort(student_list, n_students);
+  tournament_sort(list, n_students);
 
-  /**
-     Libera a memoria utilizada
-   **/
+  /** Imprime os estudantes em ordem e o critério de desempate **/
+
+  printf("Maior media: %.3f\n",get_mean(list[0]));
   for(int i = 0; i < n_students; i++){
-    remove_student(student_list[i]);
+    if(i+1 < n_students)
+      compare(list[i], list[i+1], true);
+    print_student(list[i], i+1, get_criteria(), n_students);
   }
-  free(student_list);
+
+  /*  Libera a memoria utilizada  */
+  for(int i = 0; i < n_students; i++){
+    remove_student(list[i]);
+  }
+  free(list);
 
   return 0;
 }

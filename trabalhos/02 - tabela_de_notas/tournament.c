@@ -1,19 +1,20 @@
-#include "student.h"
+#include "tournament.h"
 
 /**
+   Essa variavel só é utilizada na main no momento de imprimir os
+   elementos e seus respectivos criterios de desempate.
+
+   La é passada a flag with_criteria e atualizado o valor desta variavel.
+   
    Criterio de desempate. 
    0 - Média
-   != 0 -> Número da nota usada no desempate.
+   != 0 - Número da nota usada no desempate.
  **/
-static int crit = 0;
+int criteria = 0;
 
-/** Compara os dois valores dados
-    Retorna true se s1 > s2, dado os critérios de comparação.
-    Atualiza a variável crit de acordo com o critério utilizado.
- **/
-static boolean is_greater (_student * s1, _student * s2);
-
-#include <math.h>
+int * get_criteria () {
+  return & criteria;
+};
 
 /**
    Inicializa a arvore e define os nos folha da árvore.
@@ -33,32 +34,24 @@ static _student ** initialize_tree(_student ** list, int n_leafs, int t_size);
    Essa funcao so é chamada uma vez na execução do tournament_sort();
 
    Parametros:
-   _student ** list: Heap binario.
+   _student ** list: Lista com elementos que serao colocados nas folhas.
    int t_size : Numero de nós da arvore.
    
    Complexidade: O(logn)
-   Importante: No algoritmo essa funcao e executada
-   em um loop que e seu uso se torna O(n).
  **/
 static void build_winner_tree(_student ** tree, int parent, int t_size);
 
-static void print_students(_student ** tree, int index, int n) {
-  for(int i = index; i < n; i++){
-    printf("Tree[%d] = %s\n",i , get_name(tree[i]));
-  }
-}
-
 /**
-   Retorna uma lista ordenada com os estudantes.
+   Ordenada lista de estudantes de acordo com suas notas.
    Parametros:
-   _student ** tree : Heap com os elementos a serem ordenados.
+   _student ** list : Lista com os elementos a serem ordenados.
    int n_students: numero de elementos.
+
    Complexidade: O(nlogn)
  **/
 void tournament_sort (_student ** list, int n_students) {
 
   /**
-
      O tamanho da arvore é dado pela equação t = 2 * k,
      onde k = 2^h e h = ceil(log2(n)) é a profundidade
      da arvore e n é a quantidade de folhas. Entao
@@ -70,15 +63,16 @@ void tournament_sort (_student ** list, int n_students) {
   int h = ceil(log2(n_students));
   int t_size = (int) 2 * pow(2, h);
   
-  _student ** tree =  initialize_tree(list, n_students, t_size);
+  _student ** tree = initialize_tree(list, n_students, t_size);
 
   int last_parent = (int)  (t_size - 1) / 2.0;
 
-  /* Constroi a estrutura heap da arvore de torneio. */
+  /* Constroi a estrutura heap da arvore de torneio.
+     O(n)
+   */
   int i;
-  for(i = last_parent; i >= 1; i--)  build_winner_tree(tree, i, t_size);
-
-  //  printf("Maior media: %.3f\n",get_mean(tree[1]));
+  for(i = last_parent; i >= 1; i--)
+    build_winner_tree(tree, i, t_size);
 
   /**
      Realiza a ordenacao do vetor list e imprime
@@ -88,17 +82,6 @@ void tournament_sort (_student ** list, int n_students) {
   while(j != n_students) {
 
     list[j] = tree[1];
-
-    /** Printa os elementos ordenados. **/
-
-    /**
-    if(crit == 0 && j + 1 < n_students) printf("%d. %s - media\n", j+1, get_name(list[j]));
-    else if(j + 1 == n_students) printf("%d. %s \n", j+1, get_name(list[j]));
-    else{
-      printf("%d. %s - desempate: nota %d\n", j+1, get_name(list[j]), crit);
-      crit = 0;
-    }
-    **/
     j++;
 
     i = 1;
@@ -126,11 +109,10 @@ void tournament_sort (_student ** list, int n_students) {
       int right_node = 2 * parent + 1;
 
       /* Realiza comparacoes e trocas */
-      if(is_greater(tree[left_node], tree[right_node]))
+      if(tree[left_node] == compare(tree[left_node], tree[right_node], false))
         tree[parent] = tree[left_node];
       else
         tree[parent] = tree[right_node];
-
       i = parent;
     }
   }
@@ -147,12 +129,12 @@ static void build_winner_tree(_student ** tree, int parent, int t_size){
 
   if(left >= t_size) return;
   
-  l = is_greater(tree[left], tree[parent]);
-  r = is_greater(tree[right], tree[parent]);
+  l = tree[left] == compare(tree[left], tree[parent], false);
+  r = tree[right] == compare(tree[right], tree[parent], false);
 
   if(l  || (right <= t_size && r)){
 
-    if (right <= t_size && is_greater(tree[right], tree[left]))
+    if (right <= t_size && tree[right] == compare(tree[right], tree[left], false))
       left = right;
 
     tree[parent] = tree[left];
@@ -175,33 +157,41 @@ static _student ** initialize_tree(_student ** list, int n_leafs, int t_size){
   return tree;
 }
 
-/**
-   Retorna true se s1 > s2 dado todas as comparacoes necessarias.
-
-   Tá falhando para um caso.
-   Falta resolver.
- **/
-boolean is_greater (_student * s1, _student * s2) {
+_student * compare (_student * s1, _student * s2, boolean with_criteria) {
   
   /**  Trata os casos de alguma das váriaveis ser NULL.   **/
-  if(s1 == NULL && s2 == NULL)
-    return false;
-  if(s1 != NULL && s2 == NULL)
-    return true;
-  if(s1 == NULL && s2 != NULL)
-    return false;
+  if(s1 == NULL && s2 == NULL) return NULL;
+  if(s1 != NULL && s2 == NULL) return s1;
+  if(s1 == NULL && s2 != NULL) return s2;
   
-  if(get_mean(s1) > get_mean(s2)) return true;
-  if (get_mean(s2) > get_mean(s1)) return false;
-  
+  if(get_mean(s1) > get_mean(s2)) return s1;
+  if(get_mean(s1) < get_mean(s2)) return s2;
+
   for(int i = 0; i < get_amount_grades(s1); i++){
-    if(get_grade(s1, i) > get_grade(s2, i)){
-      printf("%s\n", get_name(s1));
-      crit = i + 1;
-      return true;
-    }
-    crit = 0;
-    return false;
+    if(with_criteria) criteria = i + 1;
+
+    float n1 = get_grade(s1, i);
+    float n2 = get_grade(s2, i);
+
+    if(n1 > n2) return s1;
+    if(n1 < n2) return s2; 
   }
-  return false;
+  return NULL;
 }
+
+void print_student(_student *student, int index, int * crit, int n_students){
+
+  if(* crit == 0 && index < n_students)
+    printf("%d. %s - media\n", index, get_name(student));
+
+  if(* crit != 0)
+    printf("%d. %s - desempate: nota %d\n", index, get_name(student), *crit);
+
+  if(index == n_students)
+    printf("%d. %s \n", index, get_name(student)); 
+
+  /* De volta ao padrão. */
+  *crit = 0;
+}
+
+

@@ -1,7 +1,9 @@
 #ifndef _student_tad_
 #define _student_tad_
 
-#include "util.h"
+#define true 1
+#define false 0
+#define boolean int
 
 #include <stdlib.h>
 #include <string.h>
