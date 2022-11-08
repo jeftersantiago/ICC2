@@ -75,8 +75,7 @@ void tournament_sort (_student ** list, int n_students) {
     build_winner_tree(tree, i, t_size);
 
   /**
-     Realiza a ordenacao do vetor list e imprime
-     a partir do maior.
+     Atualiza a arvore de torneio e ordena os elementos da lista.
    **/
   int j = 0;
   while(j != n_students) {
@@ -88,7 +87,6 @@ void tournament_sort (_student ** list, int n_students) {
     int first_leaf = pow(2, h);
     /**
        Desce na árvore até chegar na posição do maior elemento nas folhas.
-       O(logn)
      **/
     while(i < first_leaf)
       if(tree[i] == tree[2*i]) i = 2 * i;
@@ -100,7 +98,6 @@ void tournament_sort (_student ** list, int n_students) {
        Sobe a arvore atualizando os nós.
        No fim desse loop a arvore está atualizada com o
        elemento da raíz sendo o maior.
-       O(n)
      **/
     while(i > 1){
       int parent = ceil((i - 1) / 2.0);
