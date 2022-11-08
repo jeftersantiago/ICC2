@@ -7,8 +7,7 @@
 
 int * get_criteria ();
 
-/** Funcoes de ordenacao **/
-void tournament_sort (_student ** list, int n_students);
+void sort(_student ** list, int n_students);
 
 /**
    Compara os dois valores dados.

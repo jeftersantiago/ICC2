@@ -40,7 +40,7 @@ int main(int argc, char* argv[]){
      build_winner_tree(tree, i, t_size);
    
    int * sorted = tournament_sort(tree, v, n, t_size, h);
-
+   
    for(int i = 0; i < n; i++){
      printf("%d ", sorted[i]);
    }

@@ -32,7 +32,7 @@ int main () {
     i++;
   }
 
-  tournament_sort(list, n_students);
+  sort(list, n_students);
 
   /** Imprime os estudantes em ordem e o critério de desempate **/
 

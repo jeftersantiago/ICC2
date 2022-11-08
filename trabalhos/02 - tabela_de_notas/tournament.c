@@ -1,6 +1,12 @@
 #include "tournament.h"
 
 /**
+   Implementacao do torneio geral.
+   Complexidade: O(nlogk)
+ **/
+static void general_tournament_sort (_student ** tree, _student ** list, int n_students, int h);
+
+/**
    Essa variavel só é utilizada na main no momento de imprimir os
    elementos e seus respectivos criterios de desempate.
 
@@ -38,29 +44,33 @@ static _student ** initialize_tree(_student ** list, int n_leafs, int t_size);
    int t_size : Numero de nós da arvore.
    
    Complexidade: O(logn)
+   
+   
+   A construção da arvore de torneio é semelhante a construcao de um max-heap,
+   e é feita em um loop para todos nós da árvore que possuem filho, por causa
+   disso a complexidade real é O(n).
+
  **/
 static void build_winner_tree(_student ** tree, int parent, int t_size);
 
-/**
-   Ordenada lista de estudantes de acordo com suas notas.
-   Parametros:
-   _student ** list : Lista com os elementos a serem ordenados.
-   int n_students: numero de elementos.
 
-   Complexidade: O(nlogn)
+/**
+   Constroi a arvore de torneio de ordena o vetor usando o
+   tournament_sort.
  **/
-void tournament_sort (_student ** list, int n_students) {
+void sort (_student ** list, int n_students) {
 
   /**
      O tamanho da arvore é dado pela equação t = 2 * k,
      onde k = 2^h e h = ceil(log2(n)) é a profundidade
      da arvore e n é a quantidade de folhas. Entao
 
-       t = 2 * 2 ^ ceil(log2(n))
+     t = 2 * 2 ^ ceil(log2(n))
      
   **/
-
+  
   int h = ceil(log2(n_students));
+  /* k */
   int t_size = (int) 2 * pow(2, h);
   
   _student ** tree = initialize_tree(list, n_students, t_size);
@@ -74,10 +84,25 @@ void tournament_sort (_student ** list, int n_students) {
   for(i = last_parent; i >= 1; i--)
     build_winner_tree(tree, i, t_size);
 
-  /**
-     Atualiza a arvore de torneio e ordena os elementos da lista.
-   **/
+  /* Ordena a lista em O(nlogk)*/
+  general_tournament_sort(tree, list, n_students, h);
+
+}
+
+/**
+   Ordenada lista de estudantes de acordo com suas notas.
+   Parametros:
+   _student ** list : Lista com os elementos a serem ordenados.
+   int n_students: numero de elementos.
+
+   Complexidade: O(nlogn)
+ **/
+static void general_tournament_sort (_student ** tree, _student ** list, int n_students, int h) {
+  /* Atualiza a arvore de torneio e ordena os elementos da lista. */
+  int i = 1;
   int j = 0;
+
+  /* O(n) */
   while(j != n_students) {
 
     list[j] = tree[1];
@@ -87,6 +112,7 @@ void tournament_sort (_student ** list, int n_students) {
     int first_leaf = pow(2, h);
     /**
        Desce na árvore até chegar na posição do maior elemento nas folhas.
+       O(logk)
      **/
     while(i < first_leaf)
       if(tree[i] == tree[2*i]) i = 2 * i;
@@ -98,6 +124,7 @@ void tournament_sort (_student ** list, int n_students) {
        Sobe a arvore atualizando os nós.
        No fim desse loop a arvore está atualizada com o
        elemento da raíz sendo o maior.
+       O(logk)
      **/
     while(i > 1){
       int parent = ceil((i - 1) / 2.0);
@@ -117,6 +144,10 @@ void tournament_sort (_student ** list, int n_students) {
   tree = NULL;
 }
 
+/**
+   Semelhante ao algoritmo heapify, mantem a max-heap para os sub-arvores
+   da arvore de torneio.
+ **/
 static void build_winner_tree(_student ** tree, int parent, int t_size){
   int left = 2 * parent;
   int right = 2 * parent + 1;
@@ -143,14 +174,15 @@ static void build_winner_tree(_student ** tree, int parent, int t_size){
 static _student ** initialize_tree(_student ** list, int n_leafs, int t_size){
 
   _student ** tree = (_student **) malloc(sizeof(_student *) * t_size);
-  for(int i = 0; i < t_size; i++) tree[i] = NULL;
 
   int j = 0;
   for(int i = 1; i < t_size; i++)
+    /* Condicao para ser nó folha. */
     if(i > n_leafs && j < n_leafs){
       tree[i] = list[j];
       j++;
     }
+    else tree[i] = NULL;
   return tree;
 }
 
@@ -164,6 +196,7 @@ _student * compare (_student * s1, _student * s2, boolean with_criteria) {
   if(get_mean(s1) > get_mean(s2)) return s1;
   if(get_mean(s1) < get_mean(s2)) return s2;
 
+  /* Comparacao por notas */
   for(int i = 0; i < get_amount_grades(s1); i++){
     if(with_criteria) criteria = i + 1;
 
