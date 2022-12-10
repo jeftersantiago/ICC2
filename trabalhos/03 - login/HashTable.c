@@ -1,11 +1,17 @@
 #include "HashTable.h"
-#include <math.h>
 
-Student * searchHashTable(HashTable * hash, uint32_t position, Student * student);
-
-// static void bin(unsigned n);
+/**
+   Retorna o elemento na posição dada da tabela. Realiza a busca na lista ligada
+   caso tenha havido algum conflito.
+   Parametros:
+   HashTable * hash - tabela hash.
+   uint32_t position - posicao calculada por h(k) % N .
+   char * nUSP - chave da busca.
+ **/
+static Student * search_hash_table(HashTable * hash, uint32_t position, char * nUSP);
 
 #define M 65521
+/* Tamanho da tabela hash. */
 #define N 256
 
 struct HASH_TABLE {
@@ -18,19 +24,19 @@ HashTable * makeHashTable (int size) {
   HashTable * hash = (HashTable *) malloc(sizeof(HashTable));
   
   hash->size = N;
-
-  //  printf("Hash size = %d\n", hash->size);
   LinkedList ** table = (LinkedList **) malloc(sizeof(LinkedList*) * hash->size);
+  /* Inicializa os indices da tabela hash. */
   for(int i = 0; i < hash->size; i++) table[i] = NULL;
   hash->table = table;
   return hash;
 }
 
 void deleteHashTable (HashTable * hash) {
-  if(hash != NULL) {
-    for(int i = 0; i < hash->size; i++)
+  if(hash != NULL){
+    for(int i = 0; i < hash->size; i++){
       if(hash->table[i] != NULL)
         deleteLinkedList(hash->table[i]);
+    }
     free(hash->table);
     free(hash);
   }
@@ -38,45 +44,42 @@ void deleteHashTable (HashTable * hash) {
 boolean insertHashTable (HashTable * hash, Student * student) {
   if(hash != NULL){
 
-    uint32_t position = (uint32_t) getNUSP(student) % hash->size;
-    //    printf("Position = %d\n", position);
-    
+    /* Calcula indice do elemento na tabela hash */
+    uint32_t position = (uint32_t) hashing(getNUSP(student)) % hash->size;
+
+    /* Caso 1 -> não há conflito */
     if(hash->table[position] == NULL){
       hash->table[position] = newLinkedList();
       insertLinkedList(hash->table[position], student);
       return true;
     }
-    if(searchHashTable(hash, position, student) == NULL){
+    /* Caso 2 -> há conflito */
+    else if(search_hash_table(hash, position, getNUSP(student)) == NULL){
       insertLinkedList(hash->table[position], student);
       return true;
     }
   }
+  /* Caso 3 -> Numero USP invalido */
   deleteStudent(student);
   return false;
 }
 
-Student * searchHashTable (HashTable * hash, uint32_t position, Student * student) {
-  if(hash != NULL){
-    //    printStudent(student);
-    Student * s = searchLinkedList(hash->table[position], student);
-    //    if(s == NULL) printf("AQUI\n");
-    return s;
-  }
-  return NULL;
-}
-
-/**
-boolean loginHashTable(HashTable * hash, char * line) {
+int loginHashTable(HashTable * hash, char * line, Student ** student) {
 
   char * nUSP = strsep(&line, " ");
-  char * password = strsep(&line, " ");
+  uint32_t password = hashing(strsep(&line, " "));
+  uint32_t position = hashing(nUSP) % hash->size;
 
+  *student = search_hash_table(hash, position, nUSP);
 
-  int position = hashing(nUSP) / hash->size;
-  
-  return false;
+  if(*student != NULL){
+    if(password == getPassword(*student))
+      return 0;
+    else
+      return 1;
+  }
+  return 2;
 }
-*/
 
 uint32_t hashing (char * n) {
 
@@ -94,15 +97,9 @@ uint32_t hashing (char * n) {
   return sum;
 }
 
-int getSize (HashTable * hash){
-  return hash->size;
+static Student * search_hash_table (HashTable * hash, uint32_t position, char * nUSP) {
+  if(hash != NULL){
+    return searchLinkedList(hash->table[position], nUSP);
+  }
+  return NULL;
 }
-
-/**
-static void bin(unsigned n){
-    unsigned i;
-    for (i = 1 << 31; i > 0; i = i / 2)
-        (n & i) ? printf("1") : printf("0");
-    printf("\n");
-}
-**/

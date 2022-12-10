@@ -9,11 +9,11 @@ Student * newStudent (char * line);
 
 void deleteStudent (Student * student);
 
-uint32_t getNUSP (Student * student);
+char * getNUSP (Student * student);
 uint32_t getPassword (Student * student);
 
 void login (char * c);
 
-void printStudent (Student * student);
+void printGrades (Student ** student);
 
 #endif

@@ -2,7 +2,13 @@
 
 typedef struct NODE Node;
 
+/* Retorna true se a lista estiver vazia. */
 static boolean is_empty(LinkedList * list);
+
+/**
+   Função auxiliar para deletar lista ligada.
+   Realiza a remoção de nós da lista ligada recursivamente.
+**/
 static void delete_node(Node *node);
 
 struct NODE {
@@ -41,12 +47,13 @@ void insertLinkedList (LinkedList * list, Student * student){
   }
 }
 
-Student * searchLinkedList (LinkedList * list, Student * student){
+Student * searchLinkedList (LinkedList * list, char * nUSP){
   if(list != NULL){
     Node * node = list->begin;
     while(node != NULL){
-      if(getNUSP(node->student) == getNUSP(student))
-        return student;
+      if(strcmp(getNUSP(node->student), nUSP) == 0){
+        return node->student;
+      }
       node = node->next;
     }
   }
@@ -62,6 +69,7 @@ static void delete_node(Node *node){
   Node *aux = NULL;
   if(node != NULL){
     aux = node->next;
+    deleteStudent(node->student);
     free(node);
     delete_node(aux);
   }

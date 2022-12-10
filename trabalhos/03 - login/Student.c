@@ -4,7 +4,7 @@
 #define n_grades 4
 
 struct STUDENT {
-  uint32_t nUSP;
+  char * nUSP;
   uint32_t password;
   double * grades;
 };
@@ -14,7 +14,12 @@ Student * newStudent(char * line){
 
   Student * student = malloc(sizeof(Student));
 
-  student->nUSP = hashing(strsep(&line, " "));
+  char * nUSP = strsep(&line, " ");
+  size_t length = strlen(nUSP);
+
+  student->nUSP = (char *) malloc(sizeof(char *) * length);
+  strcpy(student->nUSP, nUSP);
+  
   student->password = hashing(strsep(&line, " "));
 
   double * grades = (double *) malloc(sizeof(double *) * n_grades);
@@ -31,17 +36,20 @@ Student * newStudent(char * line){
   return student;
 }
 
-uint32_t getNUSP (Student * student) { return student->nUSP; }
+char * getNUSP (Student * student) { return student->nUSP; }
 uint32_t getPassword (Student * student) { return student->password; }
 
 void deleteStudent (Student * student) {
+  free(student->nUSP);
   free(student->grades);
   free(student);
 }
 
-void printStudent (Student * student) {
-  printf("Notas: P1=%.1lf, P2=%.1lf, T1=%.1lf, T2=%.1lf",
-         student->grades[0], student->grades[1],
-         student->grades[2], student->grades[3]);
-  printf("\n");
+void printGrades (Student ** student) {
+  if(student != NULL){
+    printf("Notas: P1=%.1lf, P2=%.1lf, T1=%.1lf, T2=%.1lf",
+           (*student)->grades[0], (*student)->grades[1],
+           (*student)->grades[2], (*student)->grades[3]);
+    printf("\n");
+  }
 }
